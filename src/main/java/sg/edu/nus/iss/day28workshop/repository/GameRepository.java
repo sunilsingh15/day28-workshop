@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.LimitOperation;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
@@ -33,6 +34,15 @@ public class GameRepository {
 
     public List<Document> getCommentsForGameByID(Integer gameID) {
         return template.find(Query.query(Criteria.where("gid").is(gameID)), Document.class, "comments");
+    }
+
+    public Document getGameWithCommentsByID(Integer gameID) {
+        MatchOperation match = Aggregation.match(Criteria.where("gid").is(gameID));
+        LookupOperation lookup = Aggregation.lookup("comments", "gid", "gid", "reviews");
+
+        Aggregation pipeline = Aggregation.newAggregation(match, lookup);
+
+        return template.aggregate(pipeline, "games", Document.class).getMappedResults().get(0);
     }
 
     public List<Document> getGamesWithLimit() {

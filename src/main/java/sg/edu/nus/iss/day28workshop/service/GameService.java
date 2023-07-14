@@ -24,19 +24,18 @@ public class GameService {
     }
 
     public String getGameWithCommentsByID(Integer gameID) {
-        Document game = repository.getGameByID(gameID);
-        List<Document> comments = repository.getCommentsForGameByID(gameID);
+        Document game = repository.getGameWithCommentsByID(gameID);
+        List<Document> reviews = game.getList("reviews", Document.class);
 
         JsonObject gameJson = Json.createObjectBuilder()
                 .add("game_id", game.getInteger("gid"))
                 .add("name", game.getString("name"))
                 .add("year", game.getInteger("year"))
                 .add("rank", game.getInteger("ranking"))
-                .add("average", calculateAverageRating(comments))
                 .add("users_rated", game.getInteger("users_rated"))
                 .add("url", game.getString("url"))
                 .add("thumbnail", game.getString("image"))
-                .add("reviews", createArrayFromComments(comments))
+                .add("reviews", createArrayFromComments(reviews))
                 .add("timestamp", new Date().toString())
                 .build();
 
