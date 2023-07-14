@@ -65,4 +65,12 @@ public class GameService {
         return commentsArray.build();
     }
 
+    public List<Document> getGamesWithHighestRatedComment() {
+        return repository.getGamesWithHighestRatedComment();
+    }
+
+    public List<Document> getGamesWithLowestRatedComment() {
+        return repository.getGamesWithLowestRatedComment();
+    }
+
 }
